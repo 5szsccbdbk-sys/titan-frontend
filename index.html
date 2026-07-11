@@ -100,6 +100,10 @@
             <div class="label">Economic Event</div>
             <div id="event" class="value">---</div>
 
+            <!-- নতুন যোগ করা ডেট ও টাইম এরিয়া -->
+            <div class="label">News Date & Time</div>
+            <div id="time" class="value" style="color: #2979ff;">---</div>
+
             <div class="label">AI Recommendation</div>
             <div id="direction" class="signal">---</div>
             
@@ -132,6 +136,7 @@
 
             document.getElementById('asset').innerText = data.asset || "---";
             document.getElementById('event').innerText = data.event || "---";
+            document.getElementById('time').innerText = data.time || "---"; // এখানে টাইম সেট হবে
             document.getElementById('direction').innerText = data.direction || "---";
             document.getElementById('confidence').innerText = data.confidence || "---";
             document.getElementById('insight').innerText = data.insight || "---";
