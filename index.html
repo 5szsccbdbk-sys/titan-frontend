@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titan AI - Market Analysis</title>
+    <title>Titan AI - Secure Access</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,6 +38,42 @@
             color: #8a96a3;
             margin-bottom: 25px;
         }
+        
+        /* লগইন বক্স */
+        .login-box {
+            background: #1c2434;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #262f45;
+        }
+        .password-input {
+            width: 90%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #262f45;
+            background-color: #0b0e14;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+            letter-spacing: 2px;
+        }
+        .password-input:focus {
+            border-color: #00e676;
+        }
+        .error-msg {
+            color: #ff1744;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        /* মেইন কন্টেন্ট প্রথমে হাইড থাকবে */
+        #main-content {
+            display: none;
+        }
+
         .card {
             background: #1c2434;
             border-radius: 8px;
@@ -50,11 +86,12 @@
             font-size: 11px;
             color: #8a96a3;
             text-transform: uppercase;
+            margin-top: 10px;
         }
         .value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 12px;
+            margin-bottom: 5px;
             color: #fff;
         }
         .signal {
@@ -81,48 +118,82 @@
             font-size: 16px;
             color: #00e676;
             display: none;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Titan AI Analysis</h1>
-    <div class="subtitle">Live Market News & Signal Dashboard</div>
+    <h1>Titan Real News AI</h1>
+    <div class="subtitle">Live Forex Factory Calendar & Probability Analyzer</div>
 
-    <div id="loading" class="loading">Analyzing Market Data...</div>
-
-    <div id="dashboard">
-        <div class="card">
-            <div class="label">Asset Pair</div>
-            <div id="asset" class="value">---</div>
-
-            <div class="label">Economic Event</div>
-            <div id="event" class="value">---</div>
-
-            <!-- নতুন যোগ করা ডেট ও টাইম এরিয়া -->
-            <div class="label">News Date & Time</div>
-            <div id="time" class="value" style="color: #2979ff;">---</div>
-
-            <div class="label">AI Recommendation</div>
-            <div id="direction" class="signal">---</div>
-            
-            <div class="label" style="margin-top:10px;">Accuracy Confidence</div>
-            <div id="confidence" class="value" style="color: #ffb300;">---</div>
-        </div>
-
-        <div class="card" style="border-left: 5px solid #2979ff;">
-            <div class="label">AI Market Insight</div>
-            <div id="insight" class="value" style="font-size: 14px; font-weight: normal; line-height: 1.5; color: #cbd5e1;">
-                Click "Fetch AI Signal" to request live analysis.
-            </div>
-        </div>
+    <!-- লগইন স্ক্রিন -->
+    <div id="login-screen" class="login-box">
+        <div class="label" style="margin-bottom: 15px; font-size: 13px;">🔒 ENTER PASSWORD TO ACCESS SYSTEM</div>
+        <input type="password" id="site-password" class="password-input" placeholder="Enter Secret Pass...">
+        <div id="error-text" class="error-msg">Incorrect Password! Try Again.</div>
+        <button class="btn" onclick="checkPassword()">Unlock Dashboard</button>
     </div>
 
-    <button class="btn" onclick="fetchSignal()">Fetch AI Signal</button>
+    <!-- ড্যাশবোর্ড -->
+    <div id="main-content">
+        <div id="loading" class="loading">Connecting Live Forex Factory Calendar...</div>
+
+        <div id="dashboard">
+            <div class="card">
+                <div class="label">Target Asset Pair</div>
+                <div id="asset" class="value">---</div>
+
+                <div class="label">Forex Factory Live Event</div>
+                <div id="event" class="value">---</div>
+
+                <div class="label">News Schedule & Impact</div>
+                <div id="time" class="value" style="color: #2979ff;">---</div>
+
+                <div class="label">AI Direction Forecast</div>
+                <div id="direction" class="signal">---</div>
+                
+                <div class="label">Direction Probability (%)</div>
+                <div id="confidence" class="value" style="color: #ffb300; font-size: 20px;">---</div>
+            </div>
+
+            <div class="card" style="border-left: 5px solid #2979ff;">
+                <div class="label">AI Market Insight & Analysis</div>
+                <div id="insight" class="value" style="font-size: 13px; font-weight: normal; line-height: 1.5; color: #cbd5e1;">
+                    Click below to pull actual news data from today's economic calendar.
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="fetchSignal()">Analyze Live News</button>
+    </div>
 </div>
 
 <script>
+    const CORRECT_PASSWORD = "NTXORHN"; 
+
+    function checkPassword() {
+        const inputPass = document.getElementById('site-password').value;
+        const errorText = document.getElementById('error-text');
+        const loginScreen = document.getElementById('login-screen');
+        const mainContent = document.getElementById('main-content');
+
+        if (inputPass === CORRECT_PASSWORD) {
+            loginScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        } else {
+            errorText.style.display = 'block';
+            document.getElementById('site-password').value = '';
+        }
+    }
+
+    document.getElementById('site-password').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+
     async function fetchSignal() {
         const loadingElement = document.getElementById('loading');
         const dashboardElement = document.getElementById('dashboard');
@@ -136,7 +207,7 @@
 
             document.getElementById('asset').innerText = data.asset || "---";
             document.getElementById('event').innerText = data.event || "---";
-            document.getElementById('time').innerText = data.time || "---"; // এখানে টাইম সেট হবে
+            document.getElementById('time').innerText = data.time || "---";
             document.getElementById('direction').innerText = data.direction || "---";
             document.getElementById('confidence').innerText = data.confidence || "---";
             document.getElementById('insight').innerText = data.insight || "---";
@@ -151,7 +222,7 @@
             }
 
         } catch (error) {
-            alert('Error fetching market data. Please try again.');
+            alert('Server Syncing / No data. Please try again in a moment.');
             console.error(error);
         } finally {
             loadingElement.style.display = 'none';
