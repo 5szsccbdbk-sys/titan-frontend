@@ -39,7 +39,6 @@
             margin-bottom: 20px;
         }
         
-        /* লগইন বক্স */
         .login-box {
             background: #1c2434;
             border-radius: 8px;
@@ -120,7 +119,6 @@
             margin-bottom: 15px;
         }
 
-        /* টাইমার ডিজাইন */
         .timer-box {
             background: #1e293b;
             border: 1px dashed #2979ff;
@@ -132,7 +130,6 @@
             color: #2979ff;
         }
 
-        /* চার্ট কন্টেইনার */
         .chart-container {
             width: 100%;
             height: 250px;
@@ -341,7 +338,6 @@
             document.getElementById('confidence').innerText = data.confidence || "---";
             document.getElementById('insight').innerText = data.insight || "---";
 
-            // চার্ট ফিল্টারিং লজিক (নিউজ না থাকলে বা এরর থাকলে ডিফল্ট EUR/USD দেখাবে)
             if(data.asset && data.asset !== "MARKET CLOSED / NO NEWS" && data.asset !== "OTC / INTERNAL CHART" && data.asset !== "NO LIVE NEWS" && data.asset !== "SERVER ERROR") {
                 const tvSymbol = "FX:" + data.asset.replace("/", "");
                 loadTradingViewChart(tvSymbol);
@@ -349,7 +345,6 @@
                 loadTradingViewChart("FX:EURUSD");
             }
 
-            // টাইমার স্টার্ট
             startCountdown(data.raw_time);
 
             const dirText = data.direction || "";
