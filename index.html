@@ -69,7 +69,6 @@
             display: none;
         }
 
-        /* মেইন কন্টেন্ট প্রথমে হাইড থাকবে */
         #main-content {
             display: none;
         }
@@ -138,7 +137,7 @@
 
     <!-- ড্যাশবোর্ড -->
     <div id="main-content">
-        <div id="loading" class="loading">Connecting Live Forex Factory Calendar...</div>
+        <div id="loading" class="loading">Connecting Live Backend...</div>
 
         <div id="dashboard">
             <div class="card">
@@ -222,7 +221,7 @@
             }
 
         } catch (error) {
-            alert('Server Syncing / No data. Please try again in a moment.');
+            alert('Syncing Issue / Weekend Sleep Mode. Please try again in 5 seconds!');
             console.error(error);
         } finally {
             loadingElement.style.display = 'none';
