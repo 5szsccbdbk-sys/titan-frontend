@@ -120,7 +120,7 @@
             margin-bottom: 15px;
         }
 
-        /* টাইমার ডিজাইন (সবসময় দৃশ্যমান থাকবে) */
+        /* টাইমার ডিজাইন */
         .timer-box {
             background: #1e293b;
             border: 1px dashed #2979ff;
@@ -159,7 +159,7 @@
 
     <!-- ড্যাশবোর্ড -->
     <div id="main-content">
-        <!-- টাইমার বক্স (ডিফল্ট স্ট্যাটাস সেট করা) -->
+        <!-- টাইমার বক্স -->
         <div id="countdown-box" class="timer-box">
             📊 SYSTEM STATUS: <span id="timer-clock" style="color: #ffb300;">WAITING FOR LIVE NEWS</span>
         </div>
@@ -207,7 +207,6 @@
     let sessionPassword = "";
     let countdownInterval;
 
-     Aurora = "FX:EURUSD";
     function loadTradingViewChart(symbol = "FX:EURUSD") {
         new TradingView.widget({
             "width": "100%",
@@ -342,12 +341,15 @@
             document.getElementById('confidence').innerText = data.confidence || "---";
             document.getElementById('insight').innerText = data.insight || "---";
 
-            if(data.asset && data.asset !== "MARKET CLOSED / NO NEWS" && data.asset !== "OTC / INTERNAL CHART") {
+            // চার্ট ফিল্টারিং লজিক (নিউজ না থাকলে বা এরর থাকলে ডিফল্ট EUR/USD দেখাবে)
+            if(data.asset && data.asset !== "MARKET CLOSED / NO NEWS" && data.asset !== "OTC / INTERNAL CHART" && data.asset !== "NO LIVE NEWS" && data.asset !== "SERVER ERROR") {
                 const tvSymbol = "FX:" + data.asset.replace("/", "");
                 loadTradingViewChart(tvSymbol);
+            } else {
+                loadTradingViewChart("FX:EURUSD");
             }
 
-            // টাইমার ফাংশন কল (ডেটা না থাকলেও টেক্সট আপডেট হবে)
+            // টাইমার স্টার্ট
             startCountdown(data.raw_time);
 
             const dirText = data.direction || "";
