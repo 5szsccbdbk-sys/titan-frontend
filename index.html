@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titan AI - Secure Access</title>
+    <title>Titan AI - Neo Titan XO</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,9 +19,9 @@
         .container {
             background-color: #151a26;
             border-radius: 12px;
-            padding: 30px;
+            padding: 25px;
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             border: 1px solid #262f45;
             text-align: center;
@@ -36,7 +36,7 @@
         .subtitle {
             font-size: 12px;
             color: #8a96a3;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         /* লগইন বক্স */
@@ -76,8 +76,8 @@
         .card {
             background: #1c2434;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             border-left: 5px solid #00e676;
             text-align: left;
         }
@@ -85,12 +85,12 @@
             font-size: 11px;
             color: #8a96a3;
             text-transform: uppercase;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             color: #fff;
         }
         .signal {
@@ -119,25 +119,57 @@
             display: none;
             margin-bottom: 15px;
         }
+
+        /* টাইমার ডিজাইন */
+        .timer-box {
+            background: #1e293b;
+            border: 1px dashed #2979ff;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2979ff;
+        }
+
+        /* চার্ট কন্টেইনার */
+        .chart-container {
+            width: 100%;
+            height: 250px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #262f45;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Titan Real News AI</h1>
-    <div class="subtitle">Live Forex Factory Calendar & Probability Analyzer</div>
+    <div class="subtitle">NEO TITAN XO OFFICIAL PLATFORM</div>
 
     <!-- লগইন স্ক্রিন -->
     <div id="login-screen" class="login-box">
         <div class="label" style="margin-bottom: 15px; font-size: 13px;">🔒 ENTER PASSWORD TO ACCESS SYSTEM</div>
         <input type="password" id="site-password" class="password-input" placeholder="Enter Secret Pass...">
         <div id="error-text" class="error-msg">Incorrect Password! Try Again.</div>
-        <button class="btn" onclick="checkPassword()">Unlock Dashboard</button>
+        <button class="btn" id="unlock-btn" onclick="checkPassword()">Unlock Dashboard</button>
     </div>
 
     <!-- ড্যাশবোর্ড -->
     <div id="main-content">
+        <!-- লাইভ কাউন্টডাউন টাইমার বক্স -->
+        <div id="countdown-box" class="timer-box" style="display: none;">
+            ⏰ NEXT ECONOMIC NEWS IN: <span id="timer-clock">00:00:00</span>
+        </div>
+
         <div id="loading" class="loading">Connecting Live Backend...</div>
+
+        <!-- লাইভ চার্ট উইজেট (EUR/USD ডিফল্ট) -->
+        <div class="chart-container">
+            <div id="tradingview_chart" style="width:100%; height:100%;"></div>
+        </div>
 
         <div id="dashboard">
             <div class="card">
@@ -165,33 +197,115 @@
             </div>
         </div>
 
-        <button class="btn" onclick="fetchSignal()">Analyze Live News</button>
+        <button class="btn" style="margin-bottom: 10px;" onclick="fetchSignal()">Analyze Live News</button>
     </div>
 </div>
 
-<script>
-    const CORRECT_PASSWORD = "NTXORHN"; 
+<!-- TradingView চার্ট স্ক্রিপ্ট -->
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
-    function checkPassword() {
+<script>
+    let sessionPassword = "";
+    let countdownInterval;
+
+    function loadTradingViewChart(symbol = "FX:EURUSD") {
+        new TradingView.widget({
+            "width": "100%",
+            "height": "100%",
+            "symbol": symbol,
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": true,
+            "allow_symbol_change": false,
+            "container_id": "tradingview_chart"
+        });
+    }
+
+    async function checkPassword() {
         const inputPass = document.getElementById('site-password').value;
         const errorText = document.getElementById('error-text');
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
+        const unlockBtn = document.getElementById('unlock-btn');
 
-        if (inputPass === CORRECT_PASSWORD) {
-            loginScreen.style.display = 'none';
-            mainContent.style.display = 'block';
-        } else {
-            errorText.style.display = 'block';
-            document.getElementById('site-password').value = '';
+        unlockBtn.innerText = "Verifying...";
+        unlockBtn.disabled = true;
+
+        try {
+            const response = await fetch('https://titan-backend-on94.onrender.com/api/verify-pass', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: inputPass })
+            });
+            const data = await response.json();
+
+            if (data.status === "success") {
+                sessionPassword = inputPass;
+                loginScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                loadTradingViewChart();
+            } else {
+                errorText.style.display = 'block';
+                document.getElementById('site-password').value = '';
+                unlockBtn.innerText = "Unlock Dashboard";
+                unlockBtn.disabled = false;
+            }
+        } catch (error) {
+            alert('Server is sleeping. Please wait 15 seconds and try again!');
+            unlockBtn.innerText = "Unlock Dashboard";
+            unlockBtn.disabled = false;
         }
     }
 
     document.getElementById('site-password').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            checkPassword();
-        }
+        if (e.key === 'Enter') { checkPassword(); }
     });
+
+    function startCountdown(timeStr) {
+        clearInterval(countdownInterval);
+        if (!timeStr || timeStr === "N/A") {
+            document.getElementById('countdown-box').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('countdown-box').style.display = 'block';
+
+        const now = new Date();
+        const [timePart, ampm] = timeStr.split(' ');
+        let [hours, minutes] = timePart.split(':').map(Number);
+        
+        if (ampm === 'PM' && hours !== 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+
+        const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+
+        if (targetTime < now) {
+            document.getElementById('countdown-box').style.display = 'none';
+            return;
+        }
+
+        countdownInterval = setInterval(() => {
+            const currentTime = new Date();
+            const diff = targetTime - currentTime;
+
+            if (diff <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('timer-clock').innerText = "NEWS RELEASING NOW! 📈🔥";
+                return;
+            }
+
+            const h = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+            const m = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+            const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+            document.getElementById('timer-clock').innerText = `${h}:${m}:${s}`;
+        }, 1000);
+    }
 
     async function fetchSignal() {
         const loadingElement = document.getElementById('loading');
@@ -201,8 +315,18 @@
         dashboardElement.style.opacity = '0.5';
 
         try {
-            const response = await fetch('https://titan-backend-on94.onrender.com/api/ai-analysis');
+            const response = await fetch('https://titan-backend-on94.onrender.com/api/ai-analysis', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: sessionPassword })
+            });
             const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                location.reload();
+                return;
+            }
 
             document.getElementById('asset').innerText = data.asset || "---";
             document.getElementById('event').innerText = data.event || "---";
@@ -210,6 +334,17 @@
             document.getElementById('direction').innerText = data.direction || "---";
             document.getElementById('confidence').innerText = data.confidence || "---";
             document.getElementById('insight').innerText = data.insight || "---";
+
+            if(data.asset && data.asset !== "MARKET CLOSED / NO NEWS" && data.asset !== "OTC / INTERNAL CHART") {
+                const tvSymbol = "FX:" + data.asset.replace("/", "");
+                loadTradingViewChart(tvSymbol);
+            }
+
+            if(data.raw_time) {
+                startCountdown(data.raw_time);
+            } else {
+                document.getElementById('countdown-box').style.display = 'none';
+            }
 
             const dirText = data.direction || "";
             if(dirText.includes("SELL")) {
@@ -221,7 +356,7 @@
             }
 
         } catch (error) {
-            alert('Syncing Issue / Weekend Sleep Mode. Please try again in 5 seconds!');
+            alert('Syncing Issue. Please try again!');
             console.error(error);
         } finally {
             loadingElement.style.display = 'none';
