@@ -120,7 +120,7 @@
             margin-bottom: 15px;
         }
 
-        /* টাইমার ডিজাইন */
+        /* টাইমার ডিজাইন (সবসময় দৃশ্যমান থাকবে) */
         .timer-box {
             background: #1e293b;
             border: 1px dashed #2979ff;
@@ -159,14 +159,14 @@
 
     <!-- ড্যাশবোর্ড -->
     <div id="main-content">
-        <!-- লাইভ কাউন্টডাউন টাইমার বক্স -->
-        <div id="countdown-box" class="timer-box" style="display: none;">
-            ⏰ NEXT ECONOMIC NEWS IN: <span id="timer-clock">00:00:00</span>
+        <!-- টাইমার বক্স (ডিফল্ট স্ট্যাটাস সেট করা) -->
+        <div id="countdown-box" class="timer-box">
+            📊 SYSTEM STATUS: <span id="timer-clock" style="color: #ffb300;">WAITING FOR LIVE NEWS</span>
         </div>
 
         <div id="loading" class="loading">Connecting Live Backend...</div>
 
-        <!-- লাইভ চার্ট উইজেট (EUR/USD ডিফল্ট) -->
+        <!-- লাইভ চার্ট উইজেট -->
         <div class="chart-container">
             <div id="tradingview_chart" style="width:100%; height:100%;"></div>
         </div>
@@ -201,13 +201,13 @@
     </div>
 </div>
 
-<!-- TradingView চার্ট স্ক্রিপ্ট -->
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
     let sessionPassword = "";
     let countdownInterval;
 
+     Aurora = "FX:EURUSD";
     function loadTradingViewChart(symbol = "FX:EURUSD") {
         new TradingView.widget({
             "width": "100%",
@@ -268,12 +268,17 @@
 
     function startCountdown(timeStr) {
         clearInterval(countdownInterval);
+        const clockElement = document.getElementById('timer-clock');
+        const boxElement = document.getElementById('countdown-box');
+        
+        boxElement.style.borderColor = "#2979ff";
+        clockElement.style.color = "#2979ff";
+
         if (!timeStr || timeStr === "N/A") {
-            document.getElementById('countdown-box').style.display = 'none';
+            clockElement.innerText = "IDLE (NO NEWS SCHEDULED)";
+            clockElement.style.color = "#ffb300";
             return;
         }
-
-        document.getElementById('countdown-box').style.display = 'block';
 
         const now = new Date();
         const [timePart, ampm] = timeStr.split(' ');
@@ -285,7 +290,8 @@
         const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
 
         if (targetTime < now) {
-            document.getElementById('countdown-box').style.display = 'none';
+            clockElement.innerText = "TODAY'S NEWS EVENT PASSED";
+            clockElement.style.color = "#8a96a3";
             return;
         }
 
@@ -295,7 +301,8 @@
 
             if (diff <= 0) {
                 clearInterval(countdownInterval);
-                document.getElementById('timer-clock').innerText = "NEWS RELEASING NOW! 📈🔥";
+                clockElement.innerText = "NEWS RELEASING NOW! 📈🔥";
+                clockElement.style.color = "#00e676";
                 return;
             }
 
@@ -303,7 +310,7 @@
             const m = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
             const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
 
-            document.getElementById('timer-clock').innerText = `${h}:${m}:${s}`;
+            clockElement.innerText = `NEXT NEWS IN: ${h}:${m}:${s}`;
         }, 1000);
     }
 
@@ -340,11 +347,8 @@
                 loadTradingViewChart(tvSymbol);
             }
 
-            if(data.raw_time) {
-                startCountdown(data.raw_time);
-            } else {
-                document.getElementById('countdown-box').style.display = 'none';
-            }
+            // টাইমার ফাংশন কল (ডেটা না থাকলেও টেক্সট আপডেট হবে)
+            startCountdown(data.raw_time);
 
             const dirText = data.direction || "";
             if(dirText.includes("SELL")) {
